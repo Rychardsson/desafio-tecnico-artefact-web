@@ -62,6 +62,7 @@ export const taskRouter = createTRPCRouter({
     .input(
       z
         .object({
+          // O cursor é o último id recebido, permitindo continuar sem offset.
           cursor: z.string().nullish(),
           limit: z.number().int().min(1).max(MAX_PAGE_SIZE).optional(),
         }),

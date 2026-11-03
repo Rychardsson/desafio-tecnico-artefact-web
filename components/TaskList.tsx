@@ -20,6 +20,7 @@ export function TaskList({ initialPage }: { initialPage: TaskPage }) {
   const tasksQuery = trpc.task.list.useInfiniteQuery(
     { limit: 10 },
     {
+      // Reaproveita a página renderizada no servidor e busca só as próximas.
       getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       initialData: {
         pages: [initialPage],
@@ -37,6 +38,7 @@ export function TaskList({ initialPage }: { initialPage: TaskPage }) {
       return;
     }
 
+    // A margem inicia a busca antes de o usuário alcançar o fim da lista.
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting && !tasksQuery.isFetchingNextPage) {
