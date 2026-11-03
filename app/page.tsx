@@ -6,7 +6,7 @@ export const instant = false;
 
 export default async function Home() {
   const caller = await createServerCaller();
-  const { items } = await caller.task.list({ limit: 50 });
+  const initialPage = await caller.task.list({ limit: 10 });
 
   return (
     <main className="min-h-screen bg-zinc-50 px-4 py-10 text-zinc-950 sm:px-6">
@@ -20,7 +20,7 @@ export default async function Home() {
             Nova tarefa
           </Link>
         </header>
-        <TaskList tasks={items} />
+        <TaskList initialPage={initialPage} />
       </div>
     </main>
   );

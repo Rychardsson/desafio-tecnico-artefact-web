@@ -2,15 +2,54 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { trpc } from "@/lib/trpc/client";
 import type { Task } from "@/server/routers/task";
 
-export function TaskList({ tasks }: { tasks: Task[] }) {
+type TaskPage = {
+  items: Task[];
+  nextCursor: string | null;
+};
+
+export function TaskList({ initialPage }: { initialPage: TaskPage }) {
   const router = useRouter();
   const utils = trpc.useUtils();
+  const loadMoreRef = useRef<HTMLDivElement>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const tasksQuery = trpc.task.list.useInfiniteQuery(
+    { limit: 10 },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+      initialData: {
+        pages: [initialPage],
+        pageParams: [undefined],
+      },
+      staleTime: 30_000,
+    },
+  );
+  const tasks = tasksQuery.data?.pages.flatMap((page) => page.items) ?? [];
+  const hasNextPage = tasksQuery.hasNextPage;
+
+  useEffect(() => {
+    const sentinel = loadMoreRef.current;
+    if (!sentinel || !hasNextPage) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting && !tasksQuery.isFetchingNextPage) {
+          void tasksQuery.fetchNextPage();
+        }
+      },
+      { rootMargin: "200px" },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasNextPage, tasksQuery]);
+
   const deleteTask = trpc.task.delete.useMutation({
     onMutate: ({ id }) => {
       setDeletingId(id);
@@ -78,6 +117,15 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
           </div>
         </article>
       ))}
+      <div ref={loadMoreRef} aria-hidden="true" className="h-1" />
+      {tasksQuery.isFetchingNextPage ? (
+        <p className="py-4 text-center text-sm text-zinc-500">Carregando mais tarefas...</p>
+      ) : null}
+      {tasksQuery.error ? (
+        <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+          Não foi possível carregar mais tarefas: {tasksQuery.error.message}
+        </p>
+      ) : null}
     </div>
   );
 }

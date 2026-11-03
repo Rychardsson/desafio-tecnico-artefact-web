@@ -64,16 +64,14 @@ export const taskRouter = createTRPCRouter({
         .object({
           cursor: z.string().nullish(),
           limit: z.number().int().min(1).max(MAX_PAGE_SIZE).optional(),
-        })
-        // nullish: o cliente HTTP manda `null` quando a query não recebe input.
-        .nullish(),
+        }),
     )
     .query(({ input }) => {
-      const limit = input?.limit ?? DEFAULT_PAGE_SIZE;
+      const limit = input.limit ?? DEFAULT_PAGE_SIZE;
       const ordered = [...tasks].reverse();
 
       let start = 0;
-      if (input?.cursor) {
+      if (input.cursor) {
         const cursorIndex = ordered.findIndex((task) => task.id === input.cursor);
         if (cursorIndex === -1) {
           throw new TRPCError({
