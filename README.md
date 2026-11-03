@@ -27,6 +27,20 @@ npm run build   # gera e valida o build de produção
 npm start       # inicia o build de produção
 ```
 
+## Executando com Docker
+
+Construa a imagem e inicie o container:
+
+```bash
+docker build -t desafio-tecnico-artefact-web .
+docker run --rm -p 3000:3000 desafio-tecnico-artefact-web
+```
+
+Abra [http://localhost:3000](http://localhost:3000). A imagem usa o modo
+standalone do Next.js e executa o processo com um usuário sem privilégios.
+Como as tarefas ficam em memória, elas são perdidas quando o container é
+removido ou reiniciado.
+
 ## Funcionalidades
 
 - Listagem de tarefas com pré-carregamento no servidor (SSR).
