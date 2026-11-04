@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { trpc } from "@/lib/trpc/client";
-import type { Task } from "@/server/routers/task";
+import type { Task } from "@/server/store/task";
 
 type TaskPage = {
   items: Task[];

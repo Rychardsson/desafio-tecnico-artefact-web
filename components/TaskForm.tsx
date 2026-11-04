@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { trpc } from "@/lib/trpc/client";
-import type { Task } from "@/server/routers/task";
+import type { Task } from "@/server/store/task";
 
 type TaskFormProps = {
   task?: Task;

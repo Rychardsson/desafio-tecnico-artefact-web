@@ -11,8 +11,16 @@ export default async function EditTaskPage({
 }) {
   const { id } = await params;
   const caller = await createServerCaller();
-  const { items } = await caller.task.list({ limit: 50 });
-  const task = items.find((item) => item.id === id);
+  let task;
+  try {
+    task = await caller.task.get({ id });
+  } catch (error) {
+    if (error instanceof Error && error.message === "Tarefa não encontrada.") {
+      task = undefined;
+    } else {
+      throw error;
+    }
+  }
 
   if (!task) {
     return (

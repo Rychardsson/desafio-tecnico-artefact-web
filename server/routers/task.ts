@@ -1,46 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { tasks, findTaskIndex, type Task } from "../store/task";
 import { createTRPCRouter, publicProcedure } from "../trpc";
-
-export type Task = {
-  id: string;
-  titulo: string;
-  descricao?: string;
-  dataCriacao: Date;
-};
-
-/**
- * Lista em memória, sem banco. Fica em globalThis para sobreviver ao
- * hot reload e para o route handler e os Server Components enxergarem
- * a mesma instância dentro do processo Node.
- */
-const globalForTasks = globalThis as unknown as {
-  __artefactTaskStore?: Task[];
-};
-
-const tasks: Task[] = globalForTasks.__artefactTaskStore ?? [];
-globalForTasks.__artefactTaskStore = tasks;
+import { idSchema, taskInputSchema } from "../schemas/task";
 
 const DEFAULT_PAGE_SIZE = 10;
 const MAX_PAGE_SIZE = 50;
-
-const tituloSchema = z
-  .string()
-  .trim()
-  .min(1, "O título é obrigatório.");
-
-const descricaoSchema = z
-  .string()
-  .trim()
-  .max(5000, "A descrição deve ter no máximo 5000 caracteres.")
-  .nullish()
-  .transform((value) => (value ? value : undefined));
-
-const idSchema = z.uuid("Identificador inválido.");
-
-function findTaskIndex(id: string) {
-  return tasks.findIndex((task) => task.id === id);
-}
 
 function requireTask(id: string) {
   const index = findTaskIndex(id);
@@ -54,22 +19,19 @@ function requireTask(id: string) {
 }
 
 export const taskRouter = createTRPCRouter({
-  /**
-   * Lista paginada por cursor (id da última tarefa da página anterior).
-   * A ordem é da mais recente para a mais antiga.
-   */
   list: publicProcedure
     .input(
-      z
-        .object({
-          // O cursor é o último id recebido, permitindo continuar sem offset.
-          cursor: z.string().nullish(),
-          limit: z.number().int().min(1).max(MAX_PAGE_SIZE).optional(),
-        }),
+      z.object({
+        cursor: z.string().nullish(),
+        limit: z.number().int().min(1).max(MAX_PAGE_SIZE).optional(),
+      }),
     )
     .query(({ input }) => {
       const limit = input.limit ?? DEFAULT_PAGE_SIZE;
-      const ordered = [...tasks].reverse();
+      const ordered = [...tasks].sort(
+        (first, second) =>
+          second.dataCriacao.getTime() - first.dataCriacao.getTime(),
+      );
 
       let start = 0;
       if (input.cursor) {
@@ -92,13 +54,15 @@ export const taskRouter = createTRPCRouter({
       return { items, nextCursor };
     }),
 
+  get: publicProcedure
+    .input(z.object({ id: idSchema }))
+    .query(({ input }) => {
+      const index = requireTask(input.id);
+      return tasks[index] as Task;
+    }),
+
   create: publicProcedure
-    .input(
-      z.object({
-        titulo: tituloSchema,
-        descricao: descricaoSchema,
-      }),
-    )
+    .input(taskInputSchema)
     .mutation(({ input }) => {
       const task: Task = {
         id: crypto.randomUUID(),
@@ -114,25 +78,11 @@ export const taskRouter = createTRPCRouter({
       return task;
     }),
 
-  /** Substitui título e descrição. Descrição vazia ou ausente remove o campo. */
   update: publicProcedure
-    .input(
-      z.object({
-        id: idSchema,
-        titulo: tituloSchema,
-        descricao: descricaoSchema,
-      }),
-    )
+    .input(z.object({ id: idSchema, ...taskInputSchema.shape }))
     .mutation(({ input }) => {
       const index = requireTask(input.id);
-      const current = tasks[index];
-      if (!current) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Tarefa não encontrada.",
-        });
-      }
-
+      const current = tasks[index] as Task;
       const updated: Task = {
         id: current.id,
         titulo: input.titulo,
