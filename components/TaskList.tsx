@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { trpc } from "@/lib/trpc/client";
 import type { Task } from "@/server/store/task";
@@ -13,10 +13,15 @@ type TaskPage = {
 
 export function TaskList({ initialPage }: { initialPage: TaskPage }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const utils = trpc.useUtils();
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(
+    () => searchParams.get("feedback") ?? "",
+  );
   const tasksQuery = trpc.task.list.useInfiniteQuery(
     { limit: 10 },
     {
@@ -31,6 +36,19 @@ export function TaskList({ initialPage }: { initialPage: TaskPage }) {
   );
   const tasks = tasksQuery.data?.pages.flatMap((page) => page.items) ?? [];
   const hasNextPage = tasksQuery.hasNextPage;
+
+  useEffect(() => {
+    const feedback = searchParams.get("feedback");
+    if (!feedback) {
+      return;
+    }
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("feedback");
+    router.replace(params.size ? `${pathname}?${params}` : pathname, {
+      scroll: false,
+    });
+  }, [pathname, router, searchParams]);
 
   useEffect(() => {
     const sentinel = loadMoreRef.current;
@@ -56,10 +74,12 @@ export function TaskList({ initialPage }: { initialPage: TaskPage }) {
     onMutate: ({ id }) => {
       setDeletingId(id);
       setError("");
+      setSuccess("");
     },
     onSuccess: async () => {
       await utils.task.list.invalidate();
       setDeletingId(null);
+      setSuccess("Tarefa excluída com sucesso.");
       router.refresh();
     },
     onError: (mutationError) => {
@@ -96,6 +116,11 @@ export function TaskList({ initialPage }: { initialPage: TaskPage }) {
       {error ? (
         <p role="alert" className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
           Não foi possível excluir a tarefa: {error}
+        </p>
+      ) : null}
+      {success ? (
+        <p role="status" aria-live="polite" className="rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+          {success}
         </p>
       ) : null}
       {tasks.map((task) => (
