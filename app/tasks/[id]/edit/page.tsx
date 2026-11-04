@@ -2,7 +2,7 @@ import Link from "next/link";
 import { TaskForm } from "@/components/TaskForm";
 import { createServerCaller } from "@/lib/trpc/server";
 
-export const instant = false;
+export const dynamic = "force-dynamic";
 
 export default async function EditTaskPage({
   params,
