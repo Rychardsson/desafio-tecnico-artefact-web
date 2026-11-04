@@ -3,7 +3,7 @@ import { TRPCProvider } from "@/lib/trpc/client";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Gerenciador de Tarefas | Artefact",
+  title: "Gerenciador de Tarefas",
   description: "Sistema de gerenciamento de tarefas desenvolvido com Next.js e tRPC",
 };
 
