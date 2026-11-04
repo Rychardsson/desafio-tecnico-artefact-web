@@ -49,7 +49,7 @@ export function TaskForm({ task }: TaskFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label htmlFor="titulo" className="mb-2 block text-sm font-medium">
+        <label htmlFor="titulo" className="mb-2 block text-sm font-semibold text-zinc-800">
           Título <span aria-hidden="true">*</span>
         </label>
         <input
@@ -58,13 +58,13 @@ export function TaskForm({ task }: TaskFormProps) {
           onChange={(event) => setTitulo(event.target.value)}
           disabled={isPending}
           required
-          className="w-full rounded-lg border border-zinc-300 px-4 py-3 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100 disabled:bg-zinc-100"
+          className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 disabled:bg-zinc-100"
           placeholder="Ex.: Preparar apresentação"
         />
       </div>
 
       <div>
-        <label htmlFor="descricao" className="mb-2 block text-sm font-medium">
+        <label htmlFor="descricao" className="mb-2 block text-sm font-semibold text-zinc-800">
           Descrição <span className="font-normal text-zinc-500">(opcional)</span>
         </label>
         <textarea
@@ -73,13 +73,13 @@ export function TaskForm({ task }: TaskFormProps) {
           onChange={(event) => setDescricao(event.target.value)}
           disabled={isPending}
           rows={5}
-          className="w-full resize-y rounded-lg border border-zinc-300 px-4 py-3 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100 disabled:bg-zinc-100"
+          className="w-full resize-y rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 disabled:bg-zinc-100"
           placeholder="Adicione detalhes sobre a tarefa"
         />
       </div>
 
       {error ? (
-        <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+        <p role="alert" className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </p>
       ) : null}
@@ -88,7 +88,7 @@ export function TaskForm({ task }: TaskFormProps) {
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isPending ? "Salvando..." : task ? "Salvar alterações" : "Criar tarefa"}
         </button>
@@ -96,7 +96,7 @@ export function TaskForm({ task }: TaskFormProps) {
           type="button"
           onClick={() => router.push("/")}
           disabled={isPending}
-          className="rounded-lg px-5 py-3 font-medium text-zinc-600 transition hover:bg-zinc-100 disabled:opacity-60"
+          className="rounded-xl px-5 py-3 font-semibold text-zinc-600 transition hover:bg-zinc-100 focus:outline-none focus:ring-4 focus:ring-zinc-200 disabled:opacity-60"
         >
           Cancelar
         </button>

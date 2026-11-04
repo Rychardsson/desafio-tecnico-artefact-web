@@ -9,14 +9,19 @@ export default async function Home() {
   const initialPage = await caller.task.list({ limit: 10 });
 
   return (
-    <main className="min-h-screen bg-zinc-50 px-4 py-10 text-zinc-950 sm:px-6">
+    <main className="min-h-screen bg-zinc-50 bg-[radial-gradient(circle_at_top,_#eff6ff,_transparent_42%),#fafafa] px-4 py-8 text-zinc-950 sm:px-6 sm:py-12">
       <div className="mx-auto max-w-3xl">
-        <header className="mb-8 flex items-center justify-between gap-4">
+        <header className="mb-8 flex flex-col gap-6 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">Artefact</p>
-            <h1 className="mt-1 text-3xl font-bold tracking-tight">Minhas tarefas</h1>
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-blue-700">
+              <span className="h-1.5 w-1.5 rounded-full bg-blue-600" aria-hidden="true" />
+              Artefact
+            </div>
+            <h1 className="text-3xl font-bold tracking-tight text-zinc-950 sm:text-4xl">Minhas tarefas</h1>
+            <p className="mt-2 text-sm text-zinc-500 sm:text-base">Organize o que precisa ser feito, um passo de cada vez.</p>
           </div>
-          <Link href="/tasks/new" className="rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700">
+          <Link href="/tasks/new" className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:-translate-y-0.5 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100">
+            <span className="text-lg leading-none" aria-hidden="true">+</span>
             Nova tarefa
           </Link>
         </header>
