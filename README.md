@@ -39,10 +39,11 @@ Comandos de validação:
 ```bash
 pnpm lint
 pnpm build
+pnpm test
 ```
 
-No projeto, os comandos equivalentes via npm são `npm run lint` e
-`npm run build`.
+No projeto, os comandos equivalentes via npm são `npm run lint`, `npm run
+build` e `npm test`.
 
 ## Docker
 
@@ -64,6 +65,7 @@ processo com um usuário sem privilégios.
 - Validação no cliente e no servidor.
 - Páginas de erro e 404.
 - Acessibilidade básica com labels, foco visível e `aria-live`.
+- Testes do router com Vitest para validação, CRUD, erros e paginação.
 
 ## Arquitetura
 
