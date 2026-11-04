@@ -13,10 +13,6 @@ export default async function Home() {
       <div className="mx-auto max-w-3xl">
         <header className="mb-8 flex flex-col gap-6 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-blue-700">
-              <span className="h-1.5 w-1.5 rounded-full bg-blue-600" aria-hidden="true" />
-              Artefact
-            </div>
             <h1 className="text-3xl font-bold tracking-tight text-zinc-950 sm:text-4xl">Minhas tarefas</h1>
             <p className="mt-2 text-sm text-zinc-500 sm:text-base">Organize o que precisa ser feito, um passo de cada vez.</p>
           </div>
