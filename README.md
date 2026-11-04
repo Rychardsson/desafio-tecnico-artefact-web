@@ -129,13 +129,6 @@ adicional no SSR.
 - Não há autenticação, autorização ou persistência, pois esses itens não fazem
   parte do escopo atual.
 
-## Parte 1
-
-O escopo e as decisões iniciais do desafio estão registrados em
-[`PLANO.md`](./PLANO.md). A implementação desta etapa cobre setup, backend,
-frontend, SSR, infinite scroll, documentação e containerização descritos no
-plano.
-
 ## Segurança e configuração
 
 Não há tokens, senhas ou chaves de API no projeto. Arquivos `.env*`, credenciais
