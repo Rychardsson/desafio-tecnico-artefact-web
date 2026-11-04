@@ -2,7 +2,7 @@ import Link from "next/link";
 import { TaskList } from "@/components/TaskList";
 import { createServerCaller } from "@/lib/trpc/server";
 
-export const instant = false;
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const caller = await createServerCaller();
